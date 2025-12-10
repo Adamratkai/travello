@@ -1,5 +1,5 @@
 ### Post a new user
-POST localhost:8080/api/traveler/register
+POST localhost:4000/api/traveler/register
 Content-Type: application/json
 
 {
@@ -9,7 +9,7 @@ Content-Type: application/json
 }
 
 ### Login with the new user
-POST localhost:8080/api/traveler/login
+POST localhost:4000/api/traveler/login
 Content-Type: application/json
 
 {
