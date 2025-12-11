@@ -1,0 +1,21 @@
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: TRACE
+    org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator: DEBUG
+
+server:
+  port: 4004
+
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: traveler-service-route
+              uri: http://traveler-service:4000
+              predicates:
+                - Path=/api/traveler/**
+              filters:
+                - StripPrefix=1
