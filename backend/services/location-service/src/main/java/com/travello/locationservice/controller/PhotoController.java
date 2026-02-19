@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/photos")
+@RequestMapping("location/photos")
 public class PhotoController {
 
     private final PlaceService placeService;
