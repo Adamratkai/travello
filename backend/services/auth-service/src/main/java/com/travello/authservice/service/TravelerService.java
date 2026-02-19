@@ -7,6 +7,7 @@ import com.travello.authservice.exception.EmailAlreadyExistsException;
 import com.travello.authservice.model.Traveler;
 import com.travello.authservice.repository.TravelerRepository;
 import com.travello.authservice.security.jwt.JwtUtil;
+import io.jsonwebtoken.JwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -68,5 +69,14 @@ public class TravelerService {
         return new JwtDTO(jwtToken, userDetails.getUsername(), roles);
 
 
+    }
+
+    public boolean validateToken(String token) {
+        try{
+            jwtUtil.validateJwtToken(token);
+            return true;
+        } catch (JwtException e){
+            return false;
+        }
     }
 }
