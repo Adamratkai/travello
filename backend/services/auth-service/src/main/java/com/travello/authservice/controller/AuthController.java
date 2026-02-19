@@ -7,16 +7,13 @@ import com.travello.authservice.service.TravelerService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
-public class TravelerController {
+public class AuthController {
     private final TravelerService travelerService;
-    public TravelerController(TravelerService travelerService) {
+    public AuthController(TravelerService travelerService) {
         this.travelerService = travelerService;
     }
 
@@ -29,4 +26,17 @@ public class TravelerController {
     public JwtDTO login(@Valid @RequestBody LoginTravelerDTO loginRequest){
        return travelerService.loginUser(loginRequest);
     }
+
+    @GetMapping("/validate")
+    public ResponseEntity<Void> validateToken(@Valid @RequestHeader("Authorization") String authHeader){
+
+        if(!authHeader.startsWith("Bearer ")){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        return travelerService.validateToken(authHeader.substring(7))
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
 }
