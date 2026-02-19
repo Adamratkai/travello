@@ -96,7 +96,7 @@ public class PlaceService {
             
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-Goog-Api-Key", googleMapsApiKey);
-            headers.set("X-Goog-FieldMask", "id,displayName,rating,priceLevel,regularOpeningHours.weekdayText,types,location,photos.name");
+            headers.set("X-Goog-FieldMask", "id,displayName,rating,priceLevel,currentOpeningHours.weekdayDescriptions,types,location,photos.name");
             headers.set("Content-Type", "application/json");
             
             HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -128,9 +128,9 @@ public class PlaceService {
                         detailedPlace.displayName() != null ? detailedPlace.displayName().text() : "",
                         detailedPlace.types() != null ? detailedPlace.types() : List.of(),
                         detailedPlace.rating() != null ? detailedPlace.rating() : 0.0,
-                        detailedPlace.priceLevel() != null ? detailedPlace.priceLevel() : 0,
-                        detailedPlace.regularOpeningHours() != null 
-                                ? detailedPlace.regularOpeningHours().weekdayText() 
+                        convertPriceLevel(detailedPlace.priceLevel()),
+                        detailedPlace.currentOpeningHours() != null
+                                ? detailedPlace.currentOpeningHours().weekdayDescriptions()  // ← átnevezve
                                 : List.of(),
                         references,
                         detailedPlace.location() != null ? detailedPlace.location().latitude() : 0.0,
@@ -202,5 +202,17 @@ public class PlaceService {
         Place place = placeRepository.findByPlaceId(placeId)
                 .orElseThrow(() -> new NoSuchElementException("No place with id " + placeId));
         return getIdsFromPhotos(place.getPhotos());
+    }
+
+    private int convertPriceLevel(String priceLevel) {
+        if (priceLevel == null) return 0;
+        return switch (priceLevel) {
+            case "PRICE_LEVEL_FREE" -> 0;
+            case "PRICE_LEVEL_INEXPENSIVE" -> 1;
+            case "PRICE_LEVEL_MODERATE" -> 2;
+            case "PRICE_LEVEL_EXPENSIVE" -> 3;
+            case "PRICE_LEVEL_VERY_EXPENSIVE" -> 4;
+            default -> 0;
+        };
     }
 }

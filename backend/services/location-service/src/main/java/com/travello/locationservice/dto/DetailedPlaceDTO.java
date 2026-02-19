@@ -6,14 +6,14 @@ public record DetailedPlaceDTO(String id,
                                String name,  // Resource name: "places/{placeId}"
                                DisplayName displayName,
                                Double rating,
-                               Integer priceLevel,
+                               String priceLevel,
                                List<PlacePhotoDTO> photos,
                                List<String> types,
-                               RegularOpeningHours regularOpeningHours,
+                               CurrentOpeningHours currentOpeningHours,
                                Location location) {
     
     public record DisplayName(String text, String languageCode) {}
     
-    public record RegularOpeningHours(List<String> weekdayText) {}
+    public record CurrentOpeningHours(List<String> weekdayDescriptions) {}
 
 }
