@@ -1,0 +1,103 @@
+version: '3.8'
+
+services:
+  auth-db:
+    image: postgres:16-alpine
+    container_name: auth-db
+    environment:
+      POSTGRES_DB: auth_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - travello-network
+
+  location-db:
+    image: postgres:16-alpine
+    container_name: location-db
+    environment:
+      POSTGRES_DB: location_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - travello-network
+
+  # Services
+  auth-service:
+    build:
+      context: services/auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    environment:
+      DB_URL: jdbc:postgresql://auth-db:5432/auth_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-1800000}
+    ports:
+      - "8081:8081"
+    depends_on:
+      auth-db:
+        condition: service_healthy
+    networks:
+      - travello-network
+    restart: unless-stopped
+
+  location-service:
+    build:
+      context: services/location-service
+      dockerfile: Dockerfile
+    container_name: location-service
+    environment:
+      DB_URL: jdbc:postgresql://location-db:5432/location_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: ${JWT_SECRET}
+      GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY}
+    ports:
+      - "8082:8082"
+    depends_on:
+      location-db:
+        condition: service_healthy
+    networks:
+      - travello-network
+    restart: unless-stopped
+
+
+  api-gateway:
+    build:
+      context: api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      AUTH_SERVICE_URI: http://auth-service:8081
+      LOCATION_SERVICE_URI: http://location-service:8082
+    ports:
+      - "8080:8080"
+    depends_on:
+      auth-service:
+        condition: service_started
+      location-service:
+        condition: service_started
+
+    networks:
+      - travello-network
+    restart: unless-stopped
+
+networks:
+  travello-network:
+    driver: bridge
