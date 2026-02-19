@@ -1,0 +1,9 @@
+### Get request for a place
+
+GET http://localhost:8080/api/location/ChIJsQ9CzHgrkqUR7CzbnNwGVVM
+Authorization:Bearer {{token}}
+
+### Get request for a photo
+
+GET http://localhost:8080/api/location/photos/2c2cda77-95a9-4ff9-ad56-2dfc7ae0436f
+Authorization:Bearer {{token}}
