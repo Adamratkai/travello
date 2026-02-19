@@ -24,6 +24,7 @@ public class Traveler implements UserDetails {
     private String username;
     @Column(nullable = false)
     private String password;
+    @Getter
     @Column(nullable = false, unique = true)
     private String email;
     @ElementCollection(fetch = FetchType.EAGER)
