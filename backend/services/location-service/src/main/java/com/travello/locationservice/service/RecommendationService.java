@@ -1,5 +1,6 @@
 package com.travello.locationservice.service;
 
+import com.travello.locationservice.dto.LocationDTO;
 import tools.jackson.databind.ObjectMapper;
 import com.travello.locationservice.dto.RecommendationDTO;
 import com.travello.locationservice.dto.RecommendationResultDTO;
@@ -31,30 +32,24 @@ public class RecommendationService {
         this.objectMapper = objectMapper;
     }
 
-    public List<RecommendationDTO> getRecommendations(String location, String type) {
-        String[] coords = location.split(",");
-        if (coords.length != 2) {
-            throw new IllegalArgumentException("Location must be in format 'latitude,longitude'");
-        }
-        double latitude = Double.parseDouble(coords[0].trim());
-        double longitude = Double.parseDouble(coords[1].trim());
-        
+    public List<RecommendationDTO> getRecommendations(LocationDTO location, String type) {
+
         String url = "https://places.googleapis.com/v1/places:searchNearby";
-        
+
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Goog-Api-Key", googleMapsApiKey);
         headers.set("X-Goog-FieldMask", "places.id,places.displayName,places.rating,places.priceLevel");
         headers.setContentType(MediaType.APPLICATION_JSON);
-        
+
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("includedTypes", List.of(type));
         requestBody.put("maxResultCount", 10);
-        
+
         Map<String, Object> locationRestriction = new HashMap<>();
         Map<String, Object> circle = new HashMap<>();
         Map<String, Double> center = new HashMap<>();
-        center.put("latitude", latitude);
-        center.put("longitude", longitude);
+        center.put("latitude", location.latitude());
+        center.put("longitude", location.longitude());
         circle.put("center", center);
         circle.put("radius", 500.0);
         locationRestriction.put("circle", circle);
