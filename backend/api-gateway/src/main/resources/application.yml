@@ -13,12 +13,29 @@ spring:
       server:
         webflux:
           routes:
+              #Auth service
             - id: auth-service-route
               uri: http://auth-service:8081
               predicates:
                 - Path=/api/auth/**
               filters:
                 - StripPrefix=1
+
+            - id: auth-swagger-docs
+              uri: http://auth-service:8081
+              predicates:
+                - Path=/auth/v3/api-docs/**
+              filters:
+                - StripPrefix=1
+
+            - id: auth-swagger-ui
+              uri: http://auth-service:8081
+              predicates:
+                - Path=/auth/swagger-ui/**, /auth/swagger-ui.html
+              filters:
+                - StripPrefix=1
+
+              #Location service
             - id: location-service-route
               uri: http://location-service:8082
               predicates:
@@ -26,3 +43,31 @@ spring:
               filters:
                 - StripPrefix=1
                 - JwtValidation
+
+            - id: location-swagger-docs
+              uri: http://location-service:8082
+              predicates:
+                - Path=/location/v3/api-docs/**
+              filters:
+                - StripPrefix=1
+
+            - id: location-swagger-ui
+              uri: http://location-service:8082
+              predicates:
+                - Path=/location/swagger-ui/**, /location/swagger-ui.html
+              filters:
+                - StripPrefix=1
+
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    urls:
+      - name: Auth Service
+        url: /auth/v3/api-docs
+      - name: Location Service
+        url: /location/v3/api-docs
+      - name: API Gateway
+        url: /v3/api-docs
