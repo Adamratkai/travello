@@ -1,6 +1,7 @@
 package com.travello.authservice.security.jwt;
 
 
+import com.travello.authservice.model.Traveler;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -29,9 +30,12 @@ public class JwtUtil {
 
 
     public String generateJwtToken(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Traveler userDetails = (Traveler) authentication.getPrincipal();
+
+
         return Jwts.builder()
                 .subject((userDetails.getUsername()))
+                .claim("userId", userDetails.getId().toString())
                 .issuedAt(new Date())
                 .expiration(new Date(new Date().getTime() +jwtExpirationMs))
                 .signWith(key())
