@@ -58,6 +58,30 @@ spring:
               filters:
                 - StripPrefix=1
 
+              #Trips service
+            - id: trips-service-route
+              uri: http://trips-service:8083
+              predicates:
+                - Path=/api/trips/**
+              filters:
+                - StripPrefix=1
+                - JwtValidation
+
+            - id: trips-swagger-docs
+              uri: http://trips-service:8083
+              predicates:
+                - Path=/trips/v3/api-docs/**
+              filters:
+                - StripPrefix=1
+
+            - id: trips-swagger-ui
+              uri: http://trips-service:8083
+              predicates:
+                - Path=/trips/swagger-ui/**, /trips/swagger-ui.html
+              filters:
+                - StripPrefix=1
+
+
 
 springdoc:
   api-docs:
@@ -71,3 +95,5 @@ springdoc:
         url: /location/v3/api-docs
       - name: API Gateway
         url: /v3/api-docs
+      - name: Trips Service
+        url: /trips/v3/api-docs
