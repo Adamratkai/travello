@@ -48,7 +48,7 @@ function RecommendationDetailedPlace({placeId, onPlaceClose, onAddPlace}) {
                 <dialog ref={modalRef} id="my_modal_2" className="modal modal-open" onClick={closeModal}>
                     <div className="card bg-base-100 w-96 shadow-sm">
                         <figure className="max-h-52">
-                            <PhotosSlideShow photos={place.photos}></PhotosSlideShow>
+                            <PhotosSlideShow photoIds={place.photos}></PhotosSlideShow>
                         </figure>
                         <div className="card-body">
                             <p className="card-title justify-center">{place.name}</p>

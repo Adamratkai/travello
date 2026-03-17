@@ -32,7 +32,7 @@ const MapComponent = ({markerPosition, onClick}) => {
         >
             {markerPosition && <Marker position={markerPosition}/>}
             {markers && markers.map((markerPos, index) => (
-                <Marker key={index} position={{lat: markerPos.lat, lng: markerPos.lng}}
+                <Marker key={index} position={{lat: markerPos.latitude, lng: markerPos.longitude}}
                         icon={markerPos.selected ? selectedIcon : customIcon}/>))}
         </GoogleMap>
     );

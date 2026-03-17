@@ -1,53 +1,61 @@
-import {createContext, useState} from "react";
+import {createContext, useState, useCallback, useMemo} from "react";
 import axios from "axios";
+import {jwtDecode} from "jwt-decode";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
-    const [user, setUser] = useState(null);
-    const [token, setToken] = useState(localStorage.getItem("token") || null);
+    const [user, setUser] = useState(() => {
+        const t = localStorage.getItem("token");
+        return t ? jwtDecode(t).username : null;
+    });
+    const [token, setToken] = useState(() => localStorage.getItem("token") ?? null);
     const [error, setError] = useState(null);
-    const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("token") !== null || false);
-    const login = async (email, password) => {
+
+    const isLoggedIn = token !== null;
+
+    const login = useCallback(async (email, password) => {
         try {
             const response = await axios.post("/api/auth/login", {email, password});
-            setUser(response.data.username)
+            setUser(response.data.username);
             setToken(response.data.token);
-            setIsLoggedIn(true)
             setError(null);
             localStorage.setItem("token", response.data.token);
             return null;
         } catch (error) {
-            setError(error.response.data.message);
+            setError(error.response?.data?.message ?? "Something went wrong");
             return error;
         }
-    }
+    }, []);
 
-    const logout = () => {
+    const logout = useCallback(() => {
         setUser(null);
         setToken(null);
-        setIsLoggedIn(false);
         localStorage.removeItem("token");
-    }
+    }, []);
 
-    const register = async (username, email, password) => {
+    const register = useCallback(async (username, email, password) => {
         try {
             await axios.post("/api/auth/register", {username, email, password});
             setError(null);
             return null;
         } catch (error) {
-            setError(error.response.data.message);
+            setError(error.response?.data?.message ?? "Something went wrong");
             return error;
         }
-    }
+    }, []);
 
-    const onPageChange = () => {
+    const onPageChange = useCallback(() => {
         setError(null);
-    }
+    }, []);
+
+    const contextValue = useMemo(() => ({
+        user, setUser, login, register, logout, error, token, isLoggedIn, onPageChange
+    }), [user, login, register, logout, error, token, isLoggedIn, onPageChange]);
 
     return (
-        <AuthContext.Provider value={{user, setUser, login, register, logout, error, token, isLoggedIn, onPageChange}}>
+        <AuthContext.Provider value={contextValue}>
             {children}
         </AuthContext.Provider>
-    )
-}
+    );
+};

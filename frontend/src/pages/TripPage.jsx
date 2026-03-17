@@ -49,8 +49,8 @@ function TripPage() {
                 setActivities(response.data.tripActivities);
                 response.data.tripActivities.map(activity => {
                     setMarkers(prev => [...prev, {
-                        lat: activity.placeDTO.location.lat,
-                        lng: activity.placeDTO.location.lng,
+                        latitude: activity.placeDTO.location.latitude,
+                        longitude: activity.placeDTO.location.longitude,
                         selected: false
                     }]);
                 })

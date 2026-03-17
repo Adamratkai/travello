@@ -20,9 +20,9 @@ function TripActivity({
     function handleTripActivitySelect() {
         setIsOpen(!isOpen)
         if (!isOpen) {
-            setMarkers(markers => [...markers.filter((marker) => marker.lat !== location.lat && marker.lng !== location.lng), {
-                lat: location.lat,
-                lng: location.lng,
+            setMarkers(markers => [...markers.filter((marker) => marker.latitude !== location.latitude && marker.longitude !== location.longitude), {
+                latitude: location.latitude,
+                longitude: location.longitude,
                 selected: true
             }]);
         } else {
@@ -59,7 +59,7 @@ function TripActivity({
                     </div>
                     <p className="text-sm">{openingHours}</p>
                     <div className="h-52">
-                        <PhotosSlideShow photos={photos}></PhotosSlideShow>
+                        <PhotosSlideShow photoIds={photos}></PhotosSlideShow>
                     </div>
                 </div>
             )}
