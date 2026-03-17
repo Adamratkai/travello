@@ -21,7 +21,7 @@ function TripPage() {
 
     async function handleAddPlace(place) {
         try {
-            const response = await axiosInstance.post(`/api/trip-activities/${tripId}`, {
+            const response = await axiosInstance.post(`/api/trips/trip-activities/${tripId}`, {
                 placeId: place.placeId,
                 visitTime: tripDetail.startDate + "T00:00:00",
             });
