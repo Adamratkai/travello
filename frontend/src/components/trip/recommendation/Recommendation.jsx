@@ -16,7 +16,8 @@ function Recommendation({location, onAddPlace, placeType}) {
 
                 const response = await axiosInstance.get(`/api/location/recommendations/`, {
                     params: {
-                        location: `${location.lat},${location.lng}`,
+                        latitude: `${location.lat}`,
+                        longitude: `${location.lng}`,
                         type: placeType,
                     },
                     signal: abortController.signal,
@@ -48,11 +49,11 @@ function Recommendation({location, onAddPlace, placeType}) {
                     <div className="flex gap-5">
                         {recommendations.map((recommendation) => (
                             <RecommendedPlace
-                                key={recommendation.place_id}
-                                name={recommendation.name}
-                                price={recommendation.price_level}
+                                key={recommendation.id}
+                                name={recommendation.displayName.text}
+                                price={recommendation.priceLevel}
                                 rating={recommendation.rating}
-                                onPlaceClick={() => handlePlaceClick(recommendation.place_id)}
+                                onPlaceClick={() => handlePlaceClick(recommendation.id)}
                             />
                         ))}
                     </div>
